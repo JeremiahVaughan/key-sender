@@ -16,7 +16,9 @@ func main() {
 	}
 	defer rpio.Close()
 
-	pin := rpio.Pin(25) // physical 22
+	// crashing
+	// pin := rpio.Pin(25) // physical 22
+	pin := rpio.Pin(16) // physical 36
 	pin.Input()
 	pin.PullUp()
 	pin.Detect(rpio.FallEdge)
