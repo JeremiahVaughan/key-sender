@@ -36,4 +36,5 @@ func main() {
 
 func handleButtonPress() {
 	// todo implement
+	log.Println("button pushed")
 }
