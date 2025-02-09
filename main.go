@@ -13,6 +13,8 @@ import (
 	"github.com/warthog618/go-gpiocdev/device/rpi"
 )
 
+var d *debouncer
+
 func main() {
 	log.Println("program started")
 	ctx, cancel := context.WithCancel(context.Background())
@@ -26,6 +28,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("error, when NewChip() for main(). Error: %v", err)
 	}
+	d = newDebouncer(time.Millisecond * 200)
 	l, err := c.RequestLine(rpi.GPIO16, gpiocdev.WithEventHandler(handler), gpiocdev.WithRisingEdge)
 	if err != nil {
 		log.Fatalf("error, when RequestLine() for main(). Error: %v", err)
@@ -68,7 +71,6 @@ func (d *debouncer) debounce(f func()) {
 }
 
 func handler(evt gpiocdev.LineEvent) {
-	d := newDebouncer(1 * time.Second)
 	d.debounce(func() {
 		log.Println("edge detected")
 	})
