@@ -1,8 +1,12 @@
 package main
 
 import (
+	"context"
 	"log"
+	"os"
+	"os/signal"
 	"sync"
+	"syscall"
 	"time"
 
 	"github.com/warthog618/go-gpiocdev"
@@ -11,6 +15,13 @@ import (
 
 func main() {
 	log.Println("program started")
+	ctx, cancel := context.WithCancel(context.Background())
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
+	go func() {
+		<-sigChan
+		cancel()
+	}()
 	c, err := gpiocdev.NewChip("/dev/gpiochip0")
 	if err != nil {
 		log.Fatalf("error, when NewChip() for main(). Error: %v", err)
@@ -20,6 +31,8 @@ func main() {
 		log.Fatalf("error, when RequestLine() for main(). Error: %v", err)
 	}
 	defer l.Close()
+
+	<-ctx.Done()
 
 	// err := rpio.Open()
 	// if err != nil {
