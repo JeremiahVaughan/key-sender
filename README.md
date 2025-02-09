@@ -21,3 +21,7 @@ Manual required steps:
     - `sudo systemctl status usb-gadget.service`
 Install:
     - `go install github.com/JeremiahVaughan/key-sender@latest`
+    - `sudo cp key-sender.service /etc/systemd/system/key-sender.service`
+    - `sudo systemctl enable key-sender.service`
+    - `sudo systemctl start key-sender.service`
+    - `sudo systemctl status key-sender.service`

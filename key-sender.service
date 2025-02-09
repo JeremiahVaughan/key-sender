@@ -1,0 +1,12 @@
+[Unit]
+Description=It sends keys
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/home/piegarden/go/bin/key-sender
+Restart=on-failure
+User=root
+
+[Install]
+WantedBy=multi-user.target
