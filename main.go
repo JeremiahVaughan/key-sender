@@ -29,7 +29,7 @@ func main() {
 		log.Fatalf("error, when NewChip() for main(). Error: %v", err)
 	}
 	d = newDebouncer(time.Millisecond * 200)
-	l, err := c.RequestLine(rpi.GPIO16, gpiocdev.WithEventHandler(handler), gpiocdev.WithRisingEdge)
+	l, err := c.RequestLine(rpi.GPIO16, gpiocdev.WithEventHandler(handler), gpiocdev.WithFallingEdge)
 	if err != nil {
 		log.Fatalf("error, when RequestLine() for main(). Error: %v", err)
 	}
