@@ -1,0 +1,11 @@
+[Unit]
+Description=USB Gadget Setup
+After=local-fs.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/usb-keyboard-setup.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
