@@ -28,7 +28,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("error, when NewChip() for main(). Error: %v", err)
 	}
-	d = newDebouncer(time.Millisecond * 200)
+	d = newDebouncer(time.Second * 2)
 	l, err := c.RequestLine(rpi.GPIO16, gpiocdev.WithEventHandler(handler), gpiocdev.WithFallingEdge)
 	if err != nil {
 		log.Fatalf("error, when RequestLine() for main(). Error: %v", err)
@@ -55,17 +55,16 @@ func (d *debouncer) debounce(f func()) {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
-	// If a timer is already running, stop it
-	if d.timer != nil {
-		d.timer.Stop()
+	if d.started {
+		return
 	}
+	d.started = true
+	f()
 
 	// Start a new timer that will call the function after the delay
 	d.timer = time.AfterFunc(d.delay, func() {
-		d.mu.Lock() // we are locking before the function call because there could be multple
-		// clients connected, perhaps debugging on two different device clients (i.e., different OS or different browser)
-		f()
-		d.timer = nil // Allow the next function call to use a new timer
+		d.mu.Lock()       // we are locking before the function call because there could be multple
+		d.started = false // Allow the next function call to use a new timer
 		d.mu.Unlock()
 	})
 }
