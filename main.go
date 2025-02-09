@@ -33,34 +33,6 @@ func main() {
 	defer l.Close()
 
 	<-ctx.Done()
-
-	// err := rpio.Open()
-	// if err != nil {
-	// 	log.Fatalf("error, unable to open rpio. Error: %v", err)
-	// }
-	// defer rpio.Close()
-
-	// crashing
-	// pin := rpio.Pin(25) // physical 22
-	// pin := rpio.Pin(16) // physical 36
-	// pin.Input()
-	// pin.PullUp()
-	// pin.Detect(rpio.FallEdge)
-	// pollRate := time.Second
-	// d := newDebouncer(time.Second * 3)
-	// for {
-	// 	log.Println("polling")
-	// 	if pin.EdgeDetected() {
-	// 		log.Println("edge detected")
-	// 		d.debounce(handleButtonPress)
-	// 	}
-	// 	time.Sleep(pollRate)
-	// }
-}
-
-func handleButtonPress() {
-	// todo implement
-	log.Println("button pushed")
 }
 
 type debouncer struct {
@@ -96,6 +68,8 @@ func (d *debouncer) debounce(f func()) {
 }
 
 func handler(evt gpiocdev.LineEvent) {
-	// handle edge event
-	log.Println("edge detected")
+	d := newDebouncer(1 * time.Second)
+	d.debounce(func() {
+		log.Println("edge detected")
+	})
 }
