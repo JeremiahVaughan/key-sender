@@ -13,9 +13,9 @@ Manual required steps:
  - confirm both modules are loaded with `lsmod`
  - you can tell the libcomposite module is loaded too because the directory `/sys/kernel/config/usb_gadget` will be created automagically
  - Setup device init script in this project:
-    - `sudo mv usb-keyboard-setup.sh /usr/local/bin/`
+    - `sudo cp usb-keyboard-setup.sh /usr/local/bin/`
     - `sudo chmod +x /usr/local/bin/usb-keyboard-setup.sh`
-    - `sudo mv usb-gadget.service /etc/systemd/system/usb-gadget.service`
+    - `sudo cp usb-gadget.service /etc/systemd/system/usb-gadget.service`
     - `sudo systemctl enable usb-gadget.service`
     - `sudo systemctl start usb-gadget.service`
     - `sudo systemctl status usb-gadget.service`
