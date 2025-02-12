@@ -64,11 +64,12 @@ func main() {
 	for {
 		select {
 		case <-ctx.Done():
+			return
 		default:
 			// test
 			time.Sleep(time.Second * 4)
-			keys := []byte{KEY_A} // Typing 'a'
-			// keys := []byte{KEY_A, KEY_B, KEY_C} // Typing 'abc'
+			// keys := []byte{KEY_A} // Typing 'a'
+			keys := []byte{KEY_A, KEY_B, KEY_C} // Typing 'abc'
 
 			for _, key := range keys {
 				if err := sendKey(f, key); err != nil {
