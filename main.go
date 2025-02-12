@@ -92,6 +92,7 @@ func (d *debouncer) debounce(f func()) {
 }
 
 func handler(evt gpiocdev.LineEvent) {
+	fmt.Println("handler triggerereered")
 	d.debounce(func() {
 		fmt.Println("attempting to send keys!")
 		// Send multiple keys
