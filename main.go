@@ -58,9 +58,27 @@ func main() {
 		return
 	}
 	log.Println("device file opened")
+
 	defer f.Close()
 
-	<-ctx.Done()
+	for {
+		select {
+		case <-ctx.Done():
+		default:
+			// test
+			time.Sleep(time.Second * 4)
+			keys := []byte{KEY_A} // Typing 'a'
+			// keys := []byte{KEY_A, KEY_B, KEY_C} // Typing 'abc'
+
+			for _, key := range keys {
+				if err := sendKey(f, key); err != nil {
+					fmt.Println("Error:", err)
+					return
+				}
+			}
+			// test
+		}
+	}
 }
 
 type debouncer struct {
