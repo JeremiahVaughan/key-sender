@@ -93,6 +93,7 @@ func (d *debouncer) debounce(f func()) {
 
 func handler(evt gpiocdev.LineEvent) {
 	d.debounce(func() {
+		fmt.Println("attempting to send keys!")
 		// Send multiple keys
 		keys := []byte{KEY_A, KEY_B, KEY_C} // Typing 'abc'
 
