@@ -43,11 +43,13 @@ func main() {
 	if err != nil {
 		log.Fatalf("error, when NewChip() for main(). Error: %v", err)
 	}
+	log.Println("chip added")
 	d = newDebouncer(time.Second * 2)
 	l, err := c.RequestLine(rpi.GPIO16, gpiocdev.WithEventHandler(handler), gpiocdev.WithFallingEdge)
 	if err != nil {
 		log.Fatalf("error, when RequestLine() for main(). Error: %v", err)
 	}
+	log.Println("event handler registered")
 	defer l.Close()
 
 	f, err = os.OpenFile(DEV_HID, os.O_WRONLY, 0644)
@@ -55,6 +57,7 @@ func main() {
 		fmt.Println("Error opening HID device:", err)
 		return
 	}
+	log.Println("device file opened")
 	defer f.Close()
 
 	<-ctx.Done()
@@ -92,7 +95,7 @@ func (d *debouncer) debounce(f func()) {
 }
 
 func handler(evt gpiocdev.LineEvent) {
-	fmt.Println("handler triggerereered")
+	fmt.Println("handler triggered")
 	d.debounce(func() {
 		fmt.Println("attempting to send keys!")
 		// Send multiple keys
