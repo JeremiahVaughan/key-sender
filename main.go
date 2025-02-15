@@ -16,7 +16,7 @@ import (
 
 var (
 	DEV_HID     = "/dev/hidg0"
-	CHIP        = "/dev/gpiochip1"
+	CHIP        = "/dev/gpiochip0"
 	REPORT_SIZE = 8
 
 	// HID Key Codes (from USB HID usage tables)
@@ -45,7 +45,7 @@ func main() {
 	}
 	log.Println("chip added")
 	d = newDebouncer(time.Second * 2)
-	l, err := c.RequestLine(rpi.GPIO16, gpiocdev.WithEventHandler(handler), gpiocdev.WithFallingEdge)
+	l, err := c.RequestLine(rpi.GPIO25, gpiocdev.WithEventHandler(handler), gpiocdev.WithFallingEdge)
 	if err != nil {
 		log.Fatalf("error, when RequestLine() for main(). Error: %v", err)
 	}
