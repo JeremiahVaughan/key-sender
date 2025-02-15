@@ -52,7 +52,6 @@ func main() {
 		gpiocdev.WithEventHandler(handler),
 		gpiocdev.WithRisingEdge,
 		gpiocdev.WithPullUp,
-		// gpiocdev.WithDebounce(time.Second),
 	)
 	if err != nil {
 		log.Fatalf("error, when RequestLine() for main(). Error: %v", err)
@@ -63,9 +62,8 @@ func main() {
 	l2, err := c.RequestLine(
 		rpi.GPIO16,
 		gpiocdev.WithEventHandler(handler),
-		gpiocdev.WithBothEdges,
+		gpiocdev.WithRisingEdge,
 		gpiocdev.WithPullUp,
-		// gpiocdev.WithDebounce(time.Second),
 	)
 	if err != nil {
 		log.Fatalf("error, when RequestLine() for main(). Error: %v", err)
@@ -73,12 +71,12 @@ func main() {
 	log.Println("event handler 2 registered")
 	defer l2.Close()
 
-	// f, err = os.OpenFile(DEV_HID, os.O_WRONLY, 0644)
-	// if err != nil {
-	// 	fmt.Println("Error opening HID device:", err)
-	// 	return
-	// }
-	// log.Println("device file opened")
+	f, err = os.OpenFile(DEV_HID, os.O_WRONLY, 0644)
+	if err != nil {
+		fmt.Println("Error opening HID device:", err)
+		return
+	}
+	log.Println("device file opened")
 
 	defer f.Close()
 
@@ -104,7 +102,6 @@ func newDebouncer(delay time.Duration) *debouncer {
 }
 
 func (d *debouncer) debounce(f func()) {
-	log.Println("debounce triggered")
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
@@ -134,7 +131,6 @@ func handler(evt gpiocdev.LineEvent) {
 				return
 			}
 		}
-
 		fmt.Println("Keys sent successfully!")
 	})
 }
