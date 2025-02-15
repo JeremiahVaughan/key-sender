@@ -46,14 +46,14 @@ func main() {
 	log.Println("chip added")
 	d = newDebouncer(time.Second * 2)
 
-	l, err := c.RequestLine(rpi.GPIO25, gpiocdev.WithEventHandler(handler), gpiocdev.WithBothEdges)
+	l, err := c.RequestLine(rpi.GPIO25, gpiocdev.WithEventHandler(handlerTest), gpiocdev.WithBothEdges)
 	if err != nil {
 		log.Fatalf("error, when RequestLine() for main(). Error: %v", err)
 	}
 	log.Println("event handler 1 registered")
 	defer l.Close()
 
-	l2, err := c.RequestLine(rpi.GPIO16, gpiocdev.WithEventHandler(handler), gpiocdev.WithBothEdges)
+	l2, err := c.RequestLine(rpi.GPIO16, gpiocdev.WithEventHandler(handlerTest), gpiocdev.WithBothEdges)
 	if err != nil {
 		log.Fatalf("error, when RequestLine() for main(). Error: %v", err)
 	}
@@ -107,6 +107,10 @@ func (d *debouncer) debounce(f func()) {
 		d.started = false // Allow the next function call to use a new timer
 		d.mu.Unlock()
 	})
+}
+
+func handlerTest(evt gpiocdev.LineEvent) {
+	fmt.Println("test handler triggered: %+v", evt)
 }
 
 func handler(evt gpiocdev.LineEvent) {
