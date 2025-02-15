@@ -60,6 +60,7 @@ func main() {
 
 	l2, err := c.RequestLine(
 		rpi.GPIO16,
+		gpiocdev.AsActiveLow,
 		gpiocdev.WithEventHandler(handlerTest),
 		gpiocdev.WithBothEdges,
 		// gpiocdev.WithDebounce(time.Second),
