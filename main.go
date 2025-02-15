@@ -52,12 +52,12 @@ func main() {
 	log.Println("event handler registered")
 	defer l.Close()
 
-	// f, err = os.OpenFile(DEV_HID, os.O_WRONLY, 0644)
-	// if err != nil {
-	// 	fmt.Println("Error opening HID device:", err)
-	// 	return
-	// }
-	// log.Println("device file opened")
+	f, err = os.OpenFile(DEV_HID, os.O_WRONLY, 0644)
+	if err != nil {
+		fmt.Println("Error opening HID device:", err)
+		return
+	}
+	log.Println("device file opened")
 
 	defer f.Close()
 
@@ -65,19 +65,6 @@ func main() {
 		select {
 		case <-ctx.Done():
 			return
-		default:
-			// test
-			time.Sleep(time.Second * 4)
-			// keys := []byte{KEY_A} // Typing 'a'
-			keys := []byte{KEY_A, KEY_B, KEY_C} // Typing 'abc'
-
-			for _, key := range keys {
-				if err := sendKey(f, key); err != nil {
-					fmt.Println("Error:", err)
-					return
-				}
-			}
-			// test
 		}
 	}
 }
@@ -96,6 +83,7 @@ func newDebouncer(delay time.Duration) *debouncer {
 }
 
 func (d *debouncer) debounce(f func()) {
+	log.Println("debounce triggered")
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
