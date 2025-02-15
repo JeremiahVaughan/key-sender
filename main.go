@@ -52,12 +52,12 @@ func main() {
 	log.Println("event handler registered")
 	defer l.Close()
 
-	f, err = os.OpenFile(DEV_HID, os.O_WRONLY, 0644)
-	if err != nil {
-		fmt.Println("Error opening HID device:", err)
-		return
-	}
-	log.Println("device file opened")
+	// f, err = os.OpenFile(DEV_HID, os.O_WRONLY, 0644)
+	// if err != nil {
+	// 	fmt.Println("Error opening HID device:", err)
+	// 	return
+	// }
+	// log.Println("device file opened")
 
 	defer f.Close()
 
