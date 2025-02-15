@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"sync"
 	"syscall"
 	"time"
 
@@ -26,7 +27,7 @@ var (
 	MOD_NONE = byte(0x00) // No modifier keys
 )
 
-// var d *debouncer
+var d *debouncer
 var f *os.File
 
 func main() {
@@ -44,14 +45,14 @@ func main() {
 	}
 	log.Println("chip added")
 
-	// d = newDebouncer(time.Second * 2)
+	d = newDebouncer(time.Second * 2)
 
 	l, err := c.RequestLine(
 		rpi.GPIO25,
 		gpiocdev.WithEventHandler(handlerTest),
 		gpiocdev.WithRisingEdge,
 		gpiocdev.WithPullUp,
-		gpiocdev.WithDebounce(time.Second),
+		// gpiocdev.WithDebounce(time.Second),
 	)
 	if err != nil {
 		log.Fatalf("error, when RequestLine() for main(). Error: %v", err)
@@ -64,7 +65,7 @@ func main() {
 		gpiocdev.WithEventHandler(handlerTest),
 		gpiocdev.WithBothEdges,
 		gpiocdev.WithPullUp,
-		gpiocdev.WithDebounce(time.Second),
+		// gpiocdev.WithDebounce(time.Second),
 	)
 	if err != nil {
 		log.Fatalf("error, when RequestLine() for main(). Error: %v", err)
@@ -89,67 +90,57 @@ func main() {
 	}
 }
 
-// type debouncer struct {
-// 	delay   time.Duration
-// 	timer   *time.Timer
-// 	mu      sync.Mutex
-// 	started bool
-// }
+type debouncer struct {
+	delay   time.Duration
+	timer   *time.Timer
+	mu      sync.Mutex
+	started bool
+}
 
-// func newDebouncer(delay time.Duration) *debouncer {
-// 	return &debouncer{
-// 		delay: delay,
-// 	}
-// }
+func newDebouncer(delay time.Duration) *debouncer {
+	return &debouncer{
+		delay: delay,
+	}
+}
 
-// func (d *debouncer) debounce(f func()) {
-// 	log.Println("debounce triggered")
-// 	d.mu.Lock()
-// 	defer d.mu.Unlock()
+func (d *debouncer) debounce(f func()) {
+	log.Println("debounce triggered")
+	d.mu.Lock()
+	defer d.mu.Unlock()
 
-// 	if d.started {
-// 		return
-// 	}
-// 	d.started = true
-// 	f()
+	if d.started {
+		return
+	}
+	d.started = true
+	f()
 
-// 	// Start a new timer that will call the function after the delay
-// 	d.timer = time.AfterFunc(d.delay, func() {
-// 		d.mu.Lock()       // we are locking before the function call because there could be multple
-// 		d.started = false // Allow the next function call to use a new timer
-// 		d.mu.Unlock()
-// 	})
-// }
+	// Start a new timer that will call the function after the delay
+	d.timer = time.AfterFunc(d.delay, func() {
+		d.mu.Lock()       // we are locking before the function call because there could be multple
+		d.started = false // Allow the next function call to use a new timer
+		d.mu.Unlock()
+	})
+}
 
 func handlerTest(evt gpiocdev.LineEvent) {
 	fmt.Println("test handler triggered: %+v", evt)
 }
 
 func handler(evt gpiocdev.LineEvent) {
-	fmt.Println("handler triggered")
-	// d.debounce(func() {
-	// 	fmt.Println("attempting to send keys!")
-	// 	// Send multiple keys
-	// 	keys := []byte{KEY_A, KEY_B, KEY_C} // Typing 'abc'
+	d.debounce(func() {
+		fmt.Println("attempting to send keys!")
+		// Send multiple keys
+		keys := []byte{KEY_A, KEY_B, KEY_C} // Typing 'abc'
 
-	// 	for _, key := range keys {
-	// 		if err := sendKey(f, key); err != nil {
-	// 			fmt.Println("Error:", err)
-	// 			return
-	// 		}
-	// 	}
-
-	// 	fmt.Println("Keys sent successfully!")
-	// })
-	keys := []byte{KEY_A, KEY_B, KEY_C} // Typing 'abc'
-
-	for _, key := range keys {
-		if err := sendKey(f, key); err != nil {
-			fmt.Println("Error:", err)
-			return
+		for _, key := range keys {
+			if err := sendKey(f, key); err != nil {
+				fmt.Println("Error:", err)
+				return
+			}
 		}
-	}
-	fmt.Println("Keys sent successfully!")
+
+		fmt.Println("Keys sent successfully!")
+	})
 }
 
 func sendKey(f *os.File, key byte) error {
