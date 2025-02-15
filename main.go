@@ -45,12 +45,20 @@ func main() {
 	}
 	log.Println("chip added")
 	d = newDebouncer(time.Second * 2)
+
 	l, err := c.RequestLine(rpi.GPIO25, gpiocdev.WithEventHandler(handler), gpiocdev.WithBothEdges)
 	if err != nil {
 		log.Fatalf("error, when RequestLine() for main(). Error: %v", err)
 	}
-	log.Println("event handler registered")
+	log.Println("event handler 1 registered")
 	defer l.Close()
+
+	l2, err := c.RequestLine(rpi.GPIO16, gpiocdev.WithEventHandler(handler), gpiocdev.WithBothEdges)
+	if err != nil {
+		log.Fatalf("error, when RequestLine() for main(). Error: %v", err)
+	}
+	log.Println("event handler 2 registered")
+	defer l2.Close()
 
 	// f, err = os.OpenFile(DEV_HID, os.O_WRONLY, 0644)
 	// if err != nil {
