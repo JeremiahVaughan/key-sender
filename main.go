@@ -60,9 +60,9 @@ func main() {
 
 	l2, err := c.RequestLine(
 		rpi.GPIO16,
-		gpiocdev.AsPushPull,
 		gpiocdev.WithEventHandler(handlerTest),
 		gpiocdev.WithBothEdges,
+        gpiocdev.WithPullUp,
 		// gpiocdev.WithDebounce(time.Second),
 	)
 	if err != nil {
