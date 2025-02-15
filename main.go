@@ -49,8 +49,9 @@ func main() {
 	l, err := c.RequestLine(
 		rpi.GPIO25,
 		gpiocdev.WithEventHandler(handlerTest),
-		gpiocdev.WithBothEdges,
-		// gpiocdev.WithDebounce(time.Second),
+		gpiocdev.WithRisingEdge,
+		gpiocdev.WithPullUp,
+		gpiocdev.WithDebounce(time.Second),
 	)
 	if err != nil {
 		log.Fatalf("error, when RequestLine() for main(). Error: %v", err)
@@ -62,8 +63,8 @@ func main() {
 		rpi.GPIO16,
 		gpiocdev.WithEventHandler(handlerTest),
 		gpiocdev.WithBothEdges,
-        gpiocdev.WithPullUp,
-		// gpiocdev.WithDebounce(time.Second),
+		gpiocdev.WithPullUp,
+		gpiocdev.WithDebounce(time.Second),
 	)
 	if err != nil {
 		log.Fatalf("error, when RequestLine() for main(). Error: %v", err)
