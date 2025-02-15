@@ -49,7 +49,7 @@ func main() {
 
 	l, err := c.RequestLine(
 		rpi.GPIO25,
-		gpiocdev.WithEventHandler(handlerTest),
+		gpiocdev.WithEventHandler(handler),
 		gpiocdev.WithRisingEdge,
 		gpiocdev.WithPullUp,
 		// gpiocdev.WithDebounce(time.Second),
@@ -62,7 +62,7 @@ func main() {
 
 	l2, err := c.RequestLine(
 		rpi.GPIO16,
-		gpiocdev.WithEventHandler(handlerTest),
+		gpiocdev.WithEventHandler(handler),
 		gpiocdev.WithBothEdges,
 		gpiocdev.WithPullUp,
 		// gpiocdev.WithDebounce(time.Second),
@@ -120,10 +120,6 @@ func (d *debouncer) debounce(f func()) {
 		d.started = false // Allow the next function call to use a new timer
 		d.mu.Unlock()
 	})
-}
-
-func handlerTest(evt gpiocdev.LineEvent) {
-	fmt.Println("test handler triggered: %+v", evt)
 }
 
 func handler(evt gpiocdev.LineEvent) {
