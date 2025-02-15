@@ -16,7 +16,7 @@ import (
 
 var (
 	DEV_HID     = "/dev/hidg0"
-	CHIP        = "/dev/gpiochip0"
+	CHIP        = "/dev/gpiochip1"
 	REPORT_SIZE = 8
 
 	// HID Key Codes (from USB HID usage tables)
