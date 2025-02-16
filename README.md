@@ -30,3 +30,5 @@ Install:
     - `sudo systemctl start key-sender.service`
     - `sudo systemctl status key-sender.service`
 
+View logs with:
+    - `journalctl -u key-sender.service`
