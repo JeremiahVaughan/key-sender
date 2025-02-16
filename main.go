@@ -504,5 +504,8 @@ func sendKey(f *os.File, press []byte) error {
 		return fmt.Errorf("error, failed to send key release: %v", err)
 	}
 
+	// Small delay to simulate a real key press
+	time.Sleep(10 * time.Millisecond)
+
 	return nil
 }
