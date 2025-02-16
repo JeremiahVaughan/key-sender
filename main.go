@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"strings"
 	"sync"
 	"syscall"
 	"time"
@@ -475,6 +476,7 @@ func handle25(evt gpiocdev.LineEvent) {
 }
 
 func sendKeys(f *os.File, text string) error {
+	text = strings.TrimSpace(text)
 	for _, r := range text {
 		log.Printf("todo remove: key found: %c", r)
 		key, ok := keyMap[r]
