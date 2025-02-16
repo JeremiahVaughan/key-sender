@@ -7,6 +7,8 @@ Type=simple
 ExecStart=/home/piegarden/go/bin/key-sender
 Restart=on-failure
 User=root
+Environment="PASSWORD_16_FILE_LOCATION=<some-path>"                                       
+Environment="PASSWORD_25_FILE_LOCATION=<some-path>"                            
 
 [Install]
 WantedBy=multi-user.target

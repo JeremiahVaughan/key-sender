@@ -346,6 +346,9 @@ var (
 var d *debouncer
 var f *os.File
 
+var password16 string
+var password25 string
+
 func main() {
 	log.Println("program started")
 	ctx, cancel := context.WithCancel(context.Background())
@@ -363,29 +366,47 @@ func main() {
 
 	d = newDebouncer(time.Second * 2)
 
-	l, err := c.RequestLine(
-		rpi.GPIO16,
-		gpiocdev.WithEventHandler(handle16),
-		gpiocdev.WithRisingEdge,
-		gpiocdev.WithPullUp,
-	)
-	if err != nil {
-		log.Fatalf("error, when RequestLine() for main(). Error: %v", err)
+	password16FileLocation := os.Getenv("PASSWORD_16_FILE_LOCATION")
+	if "" != password16FileLocation {
+		var password16Bytes []byte
+		password16Bytes, err = os.ReadFile(password16FileLocation)
+		if err != nil {
+			log.Fatalf("error, when reading password 16 file. Error: %v", err)
+		}
+		password16 = string(password16Bytes)
+		l, err := c.RequestLine(
+			rpi.GPIO16,
+			gpiocdev.WithEventHandler(handle16),
+			gpiocdev.WithRisingEdge,
+			gpiocdev.WithPullUp,
+		)
+		if err != nil {
+			log.Fatalf("error, when RequestLine() for main() for 16. Error: %v", err)
+		}
+		log.Println("event handler GPIO16 registered")
+		defer l.Close()
 	}
-	log.Println("event handler GPIO16 registered")
-	defer l.Close()
 
-	l2, err := c.RequestLine(
-		rpi.GPIO25,
-		gpiocdev.WithEventHandler(handle16),
-		gpiocdev.WithRisingEdge,
-		gpiocdev.WithPullUp,
-	)
-	if err != nil {
-		log.Fatalf("error, when RequestLine() for main(). Error: %v", err)
+	password25FileLocation := os.Getenv("PASSWORD_25_FILE_LOCATION")
+	if "" != password25FileLocation {
+		var password25Bytes []byte
+		password25Bytes, err = os.ReadFile(password25FileLocation)
+		if err != nil {
+			log.Fatalf("error, when reading password 25 file. Error: %v", err)
+		}
+		password25 = string(password25Bytes)
+		l2, err := c.RequestLine(
+			rpi.GPIO25,
+			gpiocdev.WithEventHandler(handle25),
+			gpiocdev.WithRisingEdge,
+			gpiocdev.WithPullUp,
+		)
+		if err != nil {
+			log.Fatalf("error, when RequestLine() for main() for 25. Error: %v", err)
+		}
+		log.Println("event handler GPIO25 egistered")
+		defer l2.Close()
 	}
-	log.Println("event handler GPIO25 egistered")
-	defer l2.Close()
 
 	f, err = os.OpenFile(DEV_HID, os.O_WRONLY, 0644)
 	if err != nil {
@@ -437,40 +458,42 @@ func (d *debouncer) debounce(f func()) {
 
 func handle16(evt gpiocdev.LineEvent) {
 	d.debounce(func() {
-		// Send multiple keys
-		keys := []byte{A, B, C} // Typing 'abc'
-		for _, key := range keys {
-			if err := sendKey(f, key); err != nil {
-				fmt.Println("Error:", err)
-				return
-			}
+		if err := sendKeys(f, password16); err != nil {
+			fmt.Printf("error. when sendKeys() for handle16(). Error: %v", err)
+			return
 		}
 	})
 }
 
 func handle25(evt gpiocdev.LineEvent) {
 	d.debounce(func() {
-		fmt.Println("attempting to send keys!")
-		// Send multiple keys
-		keys := []byte{A, B, C} // Typing 'abc'
-		for _, key := range keys {
-			if err := sendKey(f, key); err != nil {
-				fmt.Println("Error:", err)
-				return
-			}
+		if err := sendKeys(f, password25); err != nil {
+			fmt.Printf("error. when sendKeys() for handle25(). Error: %v", err)
+			return
 		}
-		fmt.Println("Keys sent successfully!")
 	})
 }
 
-func sendKey(f *os.File, key byte) error {
+func sendKeys(f *os.File, text string) error {
+	for _, r := range text {
+		key, ok := keyMap[r]
+		if !ok {
+			return fmt.Errorf("error, expected key to exist in map for %v but it did not", r)
+		}
+		if err := sendKey(f, key); err != nil {
+			return fmt.Errorf("error, when sending key. Key: %v. Error: %v", r, err)
+		}
+	}
+	return nil
+}
+
+func sendKey(f *os.File, press []byte) error {
 	// HID report: [Modifier, Reserved, Key1, Key2, Key3, Key4, Key5, Key6]
-	press := []byte{KEY_NONE, 0x00, key, 0x00, 0x00, 0x00, 0x00, 0x00}
 	release := []byte{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}
 
 	// Send key press
 	if _, err := f.Write(press); err != nil {
-		return fmt.Errorf("failed to send key press: %v", err)
+		return fmt.Errorf("error, failed to send key press: %v", err)
 	}
 
 	// Small delay to simulate a real key press
@@ -478,7 +501,7 @@ func sendKey(f *os.File, key byte) error {
 
 	// Send key release
 	if _, err := f.Write(release); err != nil {
-		return fmt.Errorf("failed to send key release: %v", err)
+		return fmt.Errorf("error, failed to send key release: %v", err)
 	}
 
 	return nil

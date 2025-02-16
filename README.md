@@ -22,6 +22,11 @@ Manual required steps:
 Install:
     - `go install github.com/JeremiahVaughan/key-sender@latest`
     - `sudo cp key-sender.service /etc/systemd/system/key-sender.service`
+    -  create password files and set make them accessible only to root:
+        - `chown root:root /path/to/file`
+        - `chmod 400 /path/to/file` 
+    - `edit /etc/systemd/system/key-sender.service to include the desired paths for PASSWORD_16_FILE_LOCATION and PASSWORD_25_FILE_LOCATION
     - `sudo systemctl enable key-sender.service`
     - `sudo systemctl start key-sender.service`
     - `sudo systemctl status key-sender.service`
+
