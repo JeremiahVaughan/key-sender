@@ -460,7 +460,7 @@ func (d *debouncer) debounce(f func()) {
 func handle16(evt gpiocdev.LineEvent) {
 	d.debounce(func() {
 		if err := sendKeys(f, password16); err != nil {
-			fmt.Printf("error. when sendKeys() for handle16(). Error: %v", err)
+			fmt.Printf("error, when sendKeys() for handle16(). Error: %v", err)
 			return
 		}
 	})
@@ -469,7 +469,7 @@ func handle16(evt gpiocdev.LineEvent) {
 func handle25(evt gpiocdev.LineEvent) {
 	d.debounce(func() {
 		if err := sendKeys(f, password25); err != nil {
-			fmt.Printf("error. when sendKeys() for handle25(). Error: %v", err)
+			fmt.Printf("error, when sendKeys() for handle25(). Error: %v", err)
 			return
 		}
 	})
@@ -478,7 +478,6 @@ func handle25(evt gpiocdev.LineEvent) {
 func sendKeys(f *os.File, text string) error {
 	text = strings.TrimSpace(text)
 	for _, r := range text {
-		log.Printf("todo remove: key found: %c", r)
 		key, ok := keyMap[r]
 		if !ok {
 			return fmt.Errorf("error, expected key to exist in map for %v but it did not", r)
