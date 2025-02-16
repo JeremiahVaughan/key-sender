@@ -476,6 +476,7 @@ func handle25(evt gpiocdev.LineEvent) {
 
 func sendKeys(f *os.File, text string) error {
 	for _, r := range text {
+		log.Printf("todo remove: key found: %s", r)
 		key, ok := keyMap[r]
 		if !ok {
 			return fmt.Errorf("error, expected key to exist in map for %v but it did not", r)
