@@ -19,6 +19,9 @@ var (
 	CHIP        = "/dev/gpiochip0"
 	REPORT_SIZE = 8
 
+
+	// Key code reference: https://gist.github.com/MightyPork/6da26e382a7ad91b5496ee55fdc73db2
+	// todo 'g' key issue is addressed in the comments
 	// HID Key Codes (from USB HID usage tables)
 	KEY_A = byte(0x04) // 'a'
 	KEY_B = byte(0x05) // 'b'
@@ -48,27 +51,27 @@ func main() {
 	d = newDebouncer(time.Second * 2)
 
 	l, err := c.RequestLine(
-		rpi.GPIO25,
-		gpiocdev.WithEventHandler(handler),
+		rpi.GPIO16,
+		gpiocdev.WithEventHandler(handle16),
 		gpiocdev.WithRisingEdge,
 		gpiocdev.WithPullUp,
 	)
 	if err != nil {
 		log.Fatalf("error, when RequestLine() for main(). Error: %v", err)
 	}
-	log.Println("event handler 1 registered")
+	log.Println("event handler GPIO16 registered")
 	defer l.Close()
 
 	l2, err := c.RequestLine(
-		rpi.GPIO16,
-		gpiocdev.WithEventHandler(handler),
+		rpi.GPIO25,
+		gpiocdev.WithEventHandler(handle16),
 		gpiocdev.WithRisingEdge,
 		gpiocdev.WithPullUp,
 	)
 	if err != nil {
 		log.Fatalf("error, when RequestLine() for main(). Error: %v", err)
 	}
-	log.Println("event handler 2 registered")
+	log.Println("event handler GPIO25 egistered")
 	defer l2.Close()
 
 	f, err = os.OpenFile(DEV_HID, os.O_WRONLY, 0644)
@@ -119,12 +122,24 @@ func (d *debouncer) debounce(f func()) {
 	})
 }
 
-func handler(evt gpiocdev.LineEvent) {
+func handle16(evt gpiocdev.LineEvent) {
+	d.debounce(func() {
+		// Send multiple keys
+		keys := []byte{KEY_A, KEY_B, KEY_C} // Typing 'abc'
+		for _, key := range keys {
+			if err := sendKey(f, key); err != nil {
+				fmt.Println("Error:", err)
+				return
+			}
+		}
+	})
+}
+
+func handle25(evt gpiocdev.LineEvent) {
 	d.debounce(func() {
 		fmt.Println("attempting to send keys!")
 		// Send multiple keys
 		keys := []byte{KEY_A, KEY_B, KEY_C} // Typing 'abc'
-
 		for _, key := range keys {
 			if err := sendKey(f, key); err != nil {
 				fmt.Println("Error:", err)
