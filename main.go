@@ -497,7 +497,7 @@ func sendKey(f *os.File, press []byte) error {
 	}
 
 	// Small delay to simulate a real key press
-	time.Sleep(50 * time.Millisecond)
+	time.Sleep(10 * time.Millisecond)
 
 	// Send key release
 	if _, err := f.Write(release); err != nil {
