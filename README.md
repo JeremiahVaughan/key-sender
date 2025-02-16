@@ -25,7 +25,7 @@ Install:
     -  create password files and set make them accessible only to root:
         - `chown root:root /path/to/file`
         - `chmod 400 /path/to/file` 
-    - `edit /etc/systemd/system/key-sender.service to include the desired paths for PASSWORD_16_FILE_LOCATION and PASSWORD_25_FILE_LOCATION
+    - `edit /etc/systemd/system/key-sender.service to include the desired paths for PASSWORD_16_FILE_LOCATION and PASSWORD_25_FILE_LOCATION or leave blank if you only want one or the other (single password)
     - `sudo systemctl enable key-sender.service`
     - `sudo systemctl start key-sender.service`
     - `sudo systemctl status key-sender.service`
