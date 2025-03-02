@@ -500,7 +500,7 @@ func sendKey(f *os.File, press []byte) error {
 	}
 
 	// Small delay to simulate a real key press
-	time.Sleep(10 * time.Millisecond)
+	time.Sleep(30 * time.Millisecond)
 
 	// Send key release
 	// HID report: [Modifier, Reserved, Key1, Key2, Key3, Key4, Key5, Key6]
