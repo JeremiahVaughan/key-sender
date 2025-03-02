@@ -467,11 +467,14 @@ func handle16(evt gpiocdev.LineEvent) {
 }
 
 func handle25(evt gpiocdev.LineEvent) {
+    log.Printf("handler event triggered")
 	d.debounce(func() {
+        log.Printf("sending keys...")
 		if err := sendKeys(f, password25); err != nil {
 			fmt.Printf("error, when sendKeys() for handle25(). Error: %v", err)
 			return
 		}
+        log.Printf("keys sent successfully!")
 	})
 }
 
