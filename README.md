@@ -12,7 +12,6 @@ Manual required steps:
     - append `dtoverlay=dwc2` -- usb gadget module
     - ensure the legacy approach isn't present in the file: `otg_mode=1`
 
-# Please see modules-load.d(5) and modprobe.d(5) for details.
  - Make changes to the /etc/modules-load.d/. file on the SD card.
     - append: `dwc2`
     - append: `libcomposite` -- this is the gadget framework that lets you setup multiple functions at the same time. We are just using dwc2 right now, but most tutorials assume your using multiple so the libcomposite approach appears to be better documented as of right now.
