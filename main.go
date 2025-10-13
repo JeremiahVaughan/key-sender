@@ -196,7 +196,9 @@ var (
 	KEY_ESC       = byte(0x29) // Keyboard ESCAPE
 	KEY_BACKSPACE = byte(0x2a) // Keyboard DELETE (Backspace)
 	KEY_TAB       = byte(0x2b) // Keyboard Tab
-	KEY_SPACE     = byte(0x2c) // Keyboard Spacebar
+
+	_SPACE     = byte(0x2c) // Keyboard Spacebar
+	KEY_SPACE        = []byte{KEY_NONE, 0x00, _SPACE, 0x00, 0x00, 0x00, 0x00, 0x00}
 
 	MINUS           = byte(0x2d) // Keyboard - and _
 	KEY_UNDER_SCORE = []byte{MOD_LSHIFT, 0x00, MINUS, 0x00, 0x00, 0x00, 0x00, 0x00}
