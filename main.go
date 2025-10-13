@@ -247,6 +247,7 @@ var (
 	KEY_CAPSLOCK = byte(0x39) // Keyboard Caps Lock
 
 	keyMap = map[rune][]byte{
+		' ':  KEY_SPACE,
 		'a':  KEY_LOWER_A,
 		'A':  KEY_UPPER_A,
 		'b':  KEY_LOWER_B,
