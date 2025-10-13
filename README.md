@@ -21,6 +21,7 @@ Manual required steps:
     - `sudo cp usb-keyboard-setup.sh /usr/local/bin/`
     - `sudo chmod +x /usr/local/bin/usb-keyboard-setup.sh`
     - `sudo cp usb-gadget.service /etc/systemd/system/usb-gadget.service`
+    - `sudo systemctl daemon-reload`
     - `sudo systemctl enable usb-gadget.service`
     - `sudo systemctl start usb-gadget.service`
     - `sudo systemctl status usb-gadget.service`
@@ -31,6 +32,7 @@ Install:
         - `chown root:root /path/to/file`
         - `chmod 400 /path/to/file` 
     - `edit /etc/systemd/system/key-sender.service to include the desired paths for PASSWORD_16_FILE_LOCATION and PASSWORD_25_FILE_LOCATION or leave blank if you only want one or the other (single password)
+    - `sudo systemctl daemon-reload`
     - `sudo systemctl enable key-sender.service`
     - `sudo systemctl start key-sender.service`
     - `sudo systemctl status key-sender.service`
