@@ -11,19 +11,16 @@ Manual required steps:
     - append `dtoverlay=dwc2` -- usb gadget module
     - ensure the legacy approach isn't present in the file: `otg_mode=1`
 
- - Make changes to the /etc/modules-load.d/. file on the SD card.
+ - Make changes to the /etc/modules-load.d/. file on the SD card add:
+```
+dwc2
+libcomposite
+```
     - append: `dwc2`
     - append: `libcomposite` -- this is the gadget framework that lets you setup multiple functions at the same time. We are just using dwc2 right now, but most tutorials assume your using multiple so the libcomposite approach appears to be better documented as of right now.
  - confirm both modules are loaded with `lsmod`
  - you can tell the libcomposite module is loaded too because the directory `/sys/kernel/config/usb_gadget` will be created automagically
- - Setup device init script in this project:
-    - `sudo cp usb-keyboard-setup.sh /usr/local/bin/`
-    - `sudo chmod +x /usr/local/bin/usb-keyboard-setup.sh`
-    - `sudo cp usb-gadget.service /etc/systemd/system/usb-gadget.service`
-    - `sudo systemctl daemon-reload`
-    - `sudo systemctl enable usb-gadget.service`
-    - `sudo systemctl start usb-gadget.service`
-    - `sudo systemctl status usb-gadget.service`
+
 Install:
     - `edit /etc/systemd/system/key-sender.service to include the desired paths for PASSWORD_16_FILE_LOCATION and PASSWORD_25_FILE_LOCATION or leave blank if you only want one or the other (single password)
     - `./deploy.sh <target-host>`
