@@ -3,7 +3,6 @@ Manual required steps:
  - disable password auth:
    `sudo vim /etc/ssh/sshd_config`
      PasswordAuthentication no                                             
-     UsePAM no                                                             
  - Make changes to the /boot/firmware/config.txt file on the SD card.
     - Note: you may see settings in sections [cm4] and [cm5] that already contain these values, but since raspberry pi zero is not a compute model (cm) these sections are ignored on boot
     - If your not editing the files through the raspberry pi OS then Find your SD card:
@@ -26,16 +25,8 @@ Manual required steps:
     - `sudo systemctl start usb-gadget.service`
     - `sudo systemctl status usb-gadget.service`
 Install:
-    - `go install github.com/JeremiahVaughan/key-sender@latest`
-    - `sudo cp key-sender.service /etc/systemd/system/key-sender.service`
-    -  create password files and set make them accessible only to root:
-        - `chown root:root /path/to/file`
-        - `chmod 400 /path/to/file` 
     - `edit /etc/systemd/system/key-sender.service to include the desired paths for PASSWORD_16_FILE_LOCATION and PASSWORD_25_FILE_LOCATION or leave blank if you only want one or the other (single password)
-    - `sudo systemctl daemon-reload`
-    - `sudo systemctl enable key-sender.service`
-    - `sudo systemctl start key-sender.service`
-    - `sudo systemctl status key-sender.service`
+    - `./deploy.sh <target-host>`
 
 View logs with:
     - `journalctl -u key-sender.service`
