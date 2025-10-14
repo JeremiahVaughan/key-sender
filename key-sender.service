@@ -1,11 +1,13 @@
 [Unit]
 Description=It sends keys
-After=network.target
+Requires=dev-hidg0.device
+After=network.target dev-hidg0.device
 
 [Service]
 Type=simple
 ExecStart=/home/piegarden/go/bin/key-sender
 Restart=on-failure
+RestartSec=1
 User=root
 Environment="PASSWORD_16_FILE_LOCATION=<some-path>"                                       
 Environment="PASSWORD_25_FILE_LOCATION=<some-path>"                            

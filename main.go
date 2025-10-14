@@ -353,6 +353,8 @@ var f *os.File
 var password16 string
 var password25 string
 
+var connectUsb = make(chan bool, 1)
+
 func main() {
 	log.Println("program started")
 	ctx, cancel := context.WithCancel(context.Background())
@@ -412,12 +414,25 @@ func main() {
 		defer l2.Close()
 	}
 
-	f, err = os.OpenFile(DEV_HID, os.O_WRONLY, 0644)
-	if err != nil {
-		fmt.Println("Error opening HID device:", err)
-		return
-	}
-	log.Println("device file opened")
+
+	connectUsb <- true
+	go func() {
+		for {
+			select {
+			case <- connectUsb:
+				d.debounce(func() {
+					f, err = os.OpenFile(DEV_HID, os.O_WRONLY, 0644)
+					if err != nil {
+						log.Printf("Error opening HID device: %v", err)
+					} else {
+						log.Println("device file opened")
+					}
+				})
+			case <-ctx.Done():
+				return
+			}
+		}
+	}()
 
 	defer f.Close()
 
@@ -489,6 +504,7 @@ func sendKeys(f *os.File, text string) error {
 			return fmt.Errorf("error, expected key to exist in map for %v but it did not", r)
 		}
 		if err := sendKey(f, key); err != nil {
+			connectUsb <- true // attempting reconnect
 			return fmt.Errorf("error, when sending key. Key: %v. Error: %v", r, err)
 		}
 	}
