@@ -420,6 +420,7 @@ func main() {
 		for {
 			select {
 			case <- connectUsb:
+				log.Printf("attempting usb connection")
 				d.debounce(func() {
 					f, err = os.OpenFile(DEV_HID, os.O_WRONLY, 0644)
 					if err != nil {
