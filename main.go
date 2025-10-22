@@ -516,7 +516,7 @@ func sendKey(f *os.File, press []byte) error {
 
 	// Send key press
 	if _, err := f.Write(press); err != nil {
-		return fmt.Errorf("error, failed to send key press: %v", err)
+		return fmt.Errorf("error, failed to send key press. Error: %v. Provided: %s", err, press)
 	}
 
 	// Small delay to simulate a real key press
