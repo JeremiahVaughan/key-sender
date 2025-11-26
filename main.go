@@ -1,6 +1,7 @@
 package main
 
 import (
+	"os/exec"
 	"context"
 	"fmt"
 	"log"
@@ -422,11 +423,16 @@ func main() {
 			case <- connectUsb:
 				log.Printf("attempting usb connection")
 				d.debounce(func() {
-					f, err = os.OpenFile(DEV_HID, os.O_WRONLY, 0644)
+					err = exec.Command("bash", "/usr/local/bin/usb-keyboard-setup.sh").Run()
 					if err != nil {
-						log.Printf("Error opening HID device: %v", err)
+						log.Printf("error, when creating gadget. Error: %v", err)
 					} else {
-						log.Println("device file opened")
+						f, err = os.OpenFile(DEV_HID, os.O_WRONLY, 0644)
+						if err != nil {
+							log.Printf("Error opening HID device: %v", err)
+						} else {
+							log.Println("device file opened")
+						}
 					}
 				})
 			case <-ctx.Done():
@@ -478,38 +484,36 @@ func (d *debouncer) debounce(f func()) {
 
 func handle16(evt gpiocdev.LineEvent) {
 	d.debounce(func() {
-		if err := sendKeys(f, password16); err != nil {
-			fmt.Printf("error, when sendKeys() for handle16(). Error: %v", err)
-			return
-		}
+        log.Printf("sending keys for GPIO 16...")
+		sendKeys(f, password16)
 	})
 }
 
 func handle25(evt gpiocdev.LineEvent) {
     log.Printf("handler event triggered")
 	d.debounce(func() {
-        log.Printf("sending keys...")
-		if err := sendKeys(f, password25); err != nil {
-			fmt.Printf("error, when sendKeys() for handle25(). Error: %v", err)
-			return
-		}
-        log.Printf("keys sent successfully!")
+        log.Printf("sending keys for GPIO 25...")
+		sendKeys(f, password25)
 	})
 }
 
-func sendKeys(f *os.File, text string) error {
+func sendKeys(f *os.File, text string) {
 	text = strings.TrimSpace(text)
 	for _, r := range text {
 		key, ok := keyMap[r]
 		if !ok {
-			return fmt.Errorf("error, expected key to exist in map for %v but it did not", r)
+			log.Fatalf("error, expected key to exist in map for %v but it did not", r)
 		}
 		if err := sendKey(f, key); err != nil {
+			log.Printf("error sending data for key: %v", r)
+			// log.Printf("error, when sending key. Key: %v. Error: %v", r, err)
+			log.Printf("error, as string. Error: %v.", err)
+			log.Printf("error, as hex. Error: %x.", err)
 			connectUsb <- true // attempting reconnect
-			return fmt.Errorf("error, when sending key. Key: %v. Error: %v", r, err)
+			return 
 		}
+        log.Printf("keys sent successfully!")
 	}
-	return nil
 }
 
 func sendKey(f *os.File, press []byte) error {
