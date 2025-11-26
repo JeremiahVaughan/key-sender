@@ -512,8 +512,8 @@ func sendKeys(f *os.File, text string) {
 			connectUsb <- true // attempting reconnect
 			return 
 		}
-        log.Printf("keys sent successfully!")
 	}
+	log.Printf("keys sent successfully!")
 }
 
 func sendKey(f *os.File, press []byte) error {

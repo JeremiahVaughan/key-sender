@@ -9,6 +9,9 @@ if [ -d kb ]; then
   rm -rf kb
 fi
 
+# giving time for the kernal to finish cleaning up the old gadget
+sleep 1
+
 cd /sys/kernel/config/usb_gadget
 mkdir -p kb
 cd kb
@@ -50,3 +53,4 @@ ln -s functions/hid.usb0 configs/c.1/
 
 # Activate
 ls /sys/class/udc > UDC
+
