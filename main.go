@@ -519,8 +519,8 @@ func sendKey(f *os.File, press []byte) error {
 		return fmt.Errorf("error, failed to send key press. Error: %v. Provided: %s", err, press)
 	}
 
-	// Small delay to simulate a real key press
-	time.Sleep(30 * time.Millisecond)
+	// Small delay to simulate a real key press, some computers can't handle keys pressed too quickly (usually Windows). Tune this value to what works best for you
+	time.Sleep(60 * time.Millisecond)
 
 	// Send key release
 	// HID report: [Modifier, Reserved, Key1, Key2, Key3, Key4, Key5, Key6]
