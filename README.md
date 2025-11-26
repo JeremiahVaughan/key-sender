@@ -27,3 +27,15 @@ Install:
 
 View logs with:
     - `journalctl -u key-sender.service`
+
+Known issue on Mac. You cannot use a seperate cable to power the rasbperry pi to avoid the slow boot time of the pi zero.
+Apparently you can get around this by using a data-only (no power) cable for the data cable. But I don't have one to test with.
+
+Best description I can find:
+```
+• Macs often refuse to enumerate when the Pi Zero is already sourcing 5V on the USB data port.
+  When you power the Pi from the PWR port, the +5V rail is back-fed to the “USB” OTG port, so
+  the Mac sees a device that’s already driving VBUS and it treats the link as broken/illegal.
+  That’s why it works when the Mac powers the Pi (VBUS comes from the host) but fails when the
+  Pi is pre‑powered.
+```

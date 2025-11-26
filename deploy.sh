@@ -5,11 +5,6 @@ target_host=$1
 
 rsync -avzh --rsync-path='sudo rsync' --delete -e ssh ./usb-keyboard-setup.sh "$target_host:/usr/local/bin/"
 ssh $target_host "sudo chmod +x /usr/local/bin/usb-keyboard-setup.sh"
-rsync -avzh --rsync-path='sudo rsync' --delete -e ssh ./usb-gadget.service "$target_host:/etc/systemd/system/usb-gadget.service"
-ssh $target_host "sudo systemctl daemon-reload"
-ssh $target_host "sudo systemctl enable usb-gadget.service"
-ssh $target_host "sudo systemctl start usb-gadget.service"
-ssh $target_host "sudo systemctl status usb-gadget.service"
 
 if [[ "$2" = "arm32" ]]; then
     GOOS=linux GOARCH=arm GOARM=5 go build -o "/tmp/key-sender"

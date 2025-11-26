@@ -26,7 +26,7 @@ echo 0x00 > bDeviceSubClass
 echo 0x00 > bDeviceProtocol
 
 mkdir -p strings/0x409
-echo "90898c2300000102" > strings/0x409/serialnumber
+echo "90898c2300000103" > strings/0x409/serialnumber
 echo "CanaKit" > strings/0x409/manufacturer
 echo "Raspberry Pi Zero W Rev 1.1" > strings/0x409/product
 
